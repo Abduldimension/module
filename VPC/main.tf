@@ -4,8 +4,8 @@
 #Here we create terraform VPC 
 resource "aws_vpc" "main" {
   cidr_block           = var.cidr_block
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  enable_dns_support   = var.enable_dns_support 
+  enable_dns_hostnames = var.enable_dns_hostnames
   tags = {
     Name = var.vpc_name
   }
@@ -17,9 +17,9 @@ resource "aws_subnet" "public" {
   count = 2
 
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = element(["10.0.1.0/24", "10.0.2.0/24"], count.index)
-  availability_zone       = element(["us-east-1a", "us-east-1b"], count.index)
-  map_public_ip_on_launch = true
+  cidr_block              = var.cidr_block
+  availability_zone = var.availability_zone
+  map_public_ip_on_launch = var.map_public_ip_on_launch
 
   tags = {
     Name = "${var.vpc_name}-public-${count.index}"
@@ -32,9 +32,9 @@ resource "aws_subnet" "private" {
   count = 2
 
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = element(["10.0.3.0/24", "10.0.4.0/24"], count.index)
-  availability_zone       = element(["us-east-1a", "us-east-1b"], count.index)
-  map_public_ip_on_launch = false
+  cidr_block              = var.availability_zone
+  availability_zone       = var.availability_zone
+  map_public_ip_on_launch = var.map_public_ip_on_launch
 
   tags = {
     Name = "${var.vpc_name}-private-${count.index}"
